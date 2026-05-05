@@ -467,32 +467,32 @@ export const tutorials: Tutorial[] = [
     categorySlug: "aplicativos",
     categoryIcon: "smartphone",
     difficulty: "Iniciante",
-    image: "/images/Uber.bmp",
+    image: "/images/Uber.png",
     featured: false,
     steps: [
       {
         title: "Abra o aplicativo Uber",
         instruction: "Toque no ícone preto escrito 'Uber' para abrir.",
         tip: "Lembre-se de ligar o GPS do seu celular.",
-        image: "/images/Uber.bmp"
+        image: "/images/Uber.png"
       },
       {
         title: "Diga para onde você vai",
         instruction: "Toque em 'Para onde?' e digite o endereço de destino.",
         tip: "Você também pode escolher lugares salvos como 'Casa' ou 'Trabalho'.",
-        image: "/images/Uber.bmp"
+        image: "/images/Uber.png"
       },
       {
         title: "Escolha o tipo de carro",
         instruction: "Escolha entre as opções (UberX é o mais comum) e veja o preço.",
         tip: "Confira o tempo que o motorista vai demorar para chegar.",
-        image: "/images/Uber.bmp"
+        image: "/images/Uber.png"
       },
       {
         title: "Confirme a viagem",
         instruction: "Toque em 'Confirmar UberX' e aguarde o app encontrar um motorista.",
         tip: "Fique de olho na placa e no modelo do carro que aparecerá na tela.",
-        image: "/images/Uber.bmp"
+        image: "/images/Uber.png"
       }
     ],
     videoUrl: "https://www.youtube.com/embed/06KtCd3_kqA",
