@@ -1,0 +1,20 @@
+project:
+  name: "Project Context Initialization"
+  scale: MEDIUM
+  started: "2026-05-06T22:33:37.047Z"
+  current_phase: P
+
+phases:
+  P:
+    status: in_progress
+    started_at: "2026-05-06T22:33:37.047Z"
+  R:
+    status: pending
+  E:
+    status: pending
+  V:
+    status: pending
+  C:
+    status: skipped
+    reason: "Not required for scale MEDIUM"
+

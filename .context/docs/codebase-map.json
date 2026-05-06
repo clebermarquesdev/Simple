@@ -1,0 +1,472 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-05-06T22:30:31.944Z",
+  "stack": {
+    "primaryLanguage": "typescript",
+    "languages": [
+      "javascript",
+      "typescript"
+    ],
+    "frameworks": [
+      "nextjs"
+    ],
+    "buildTools": [],
+    "testFrameworks": [],
+    "packageManager": "npm",
+    "isMonorepo": false,
+    "hasDocker": false,
+    "hasCI": false,
+    "runtimeEnvironment": "browser"
+  },
+  "structure": {
+    "totalFiles": 60,
+    "rootPath": ".",
+    "topDirectories": [
+      {
+        "name": "public",
+        "fileCount": 20,
+        "description": "Public static assets"
+      },
+      {
+        "name": "src",
+        "fileCount": 30,
+        "description": "Source code root"
+      }
+    ],
+    "languageDistribution": [
+      {
+        "extension": ".tsx",
+        "count": 22
+      },
+      {
+        "extension": ".png",
+        "count": 10
+      },
+      {
+        "extension": ".ts",
+        "count": 8
+      },
+      {
+        "extension": ".svg",
+        "count": 6
+      },
+      {
+        "extension": ".json",
+        "count": 3
+      },
+      {
+        "extension": ".md",
+        "count": 3
+      },
+      {
+        "extension": ".jpg",
+        "count": 3
+      },
+      {
+        "extension": ".mjs",
+        "count": 2
+      },
+      {
+        "extension": ".css",
+        "count": 1
+      },
+      {
+        "extension": ".ico",
+        "count": 1
+      }
+    ]
+  },
+  "architecture": {
+    "layers": [
+      {
+        "name": "Repositories",
+        "description": "Data access and persistence",
+        "directories": [
+          "src\\data"
+        ],
+        "symbolCount": 7,
+        "dependsOn": []
+      },
+      {
+        "name": "Controllers",
+        "description": "Request handling and routing",
+        "directories": [
+          "src\\app\\api\\chat",
+          "src\\app\\api\\auth\\[...nextauth]"
+        ],
+        "symbolCount": 1,
+        "dependsOn": []
+      },
+      {
+        "name": "Components",
+        "description": "UI components and views",
+        "directories": [
+          "src\\components",
+          "src\\app",
+          "src\\app\\perfil",
+          "src\\app\\favoritos",
+          "src\\app\\categorias",
+          "src\\app\\tutorial\\[slug]",
+          "src\\app\\categorias\\[slug]"
+        ],
+        "symbolCount": 17,
+        "dependsOn": []
+      }
+    ],
+    "patterns": [],
+    "entryPoints": [],
+    "mainEntryPoints": [],
+    "moduleExports": []
+  },
+  "symbols": {
+    "classes": [],
+    "interfaces": [
+      {
+        "name": "Category",
+        "kind": "interface",
+        "file": "src\\data\\tutorials.ts",
+        "line": 22,
+        "exported": true
+      },
+      {
+        "name": "Tutorial",
+        "kind": "interface",
+        "file": "src\\data\\tutorials.ts",
+        "line": 8,
+        "exported": true
+      },
+      {
+        "name": "TutorialStep",
+        "kind": "interface",
+        "file": "src\\data\\tutorials.ts",
+        "line": 1,
+        "exported": true
+      },
+      {
+        "name": "CategoryCardProps",
+        "kind": "interface",
+        "file": "src\\components\\CategoryCard.tsx",
+        "line": 4,
+        "exported": false
+      },
+      {
+        "name": "ChatModalProps",
+        "kind": "interface",
+        "file": "src\\components\\ChatModal.tsx",
+        "line": 12,
+        "exported": false
+      },
+      {
+        "name": "FavoriteCardProps",
+        "kind": "interface",
+        "file": "src\\components\\FavoriteCard.tsx",
+        "line": 6,
+        "exported": false
+      },
+      {
+        "name": "IconProps",
+        "kind": "interface",
+        "file": "src\\components\\Icon.tsx",
+        "line": 1,
+        "exported": false
+      },
+      {
+        "name": "Message",
+        "kind": "interface",
+        "file": "src\\components\\ChatModal.tsx",
+        "line": 6,
+        "exported": false
+      },
+      {
+        "name": "PerfilClientProps",
+        "kind": "interface",
+        "file": "src\\app\\perfil\\PerfilClient.tsx",
+        "line": 7,
+        "exported": false
+      },
+      {
+        "name": "ProgressBarProps",
+        "kind": "interface",
+        "file": "src\\components\\ProgressBar.tsx",
+        "line": 1,
+        "exported": false
+      },
+      {
+        "name": "SearchBarProps",
+        "kind": "interface",
+        "file": "src\\components\\SearchBar.tsx",
+        "line": 5,
+        "exported": false
+      },
+      {
+        "name": "StepViewProps",
+        "kind": "interface",
+        "file": "src\\components\\StepView.tsx",
+        "line": 7,
+        "exported": false
+      },
+      {
+        "name": "SwitchProps",
+        "kind": "interface",
+        "file": "src\\components\\Switch.tsx",
+        "line": 3,
+        "exported": false
+      },
+      {
+        "name": "TutorialCardProps",
+        "kind": "interface",
+        "file": "src\\components\\TutorialCard.tsx",
+        "line": 5,
+        "exported": false
+      }
+    ],
+    "functions": [
+      {
+        "name": "getFeaturedTutorials",
+        "kind": "function",
+        "file": "src\\data\\tutorials.ts",
+        "line": 624,
+        "exported": true
+      },
+      {
+        "name": "getTutorialBySlug",
+        "kind": "function",
+        "file": "src\\data\\tutorials.ts",
+        "line": 616,
+        "exported": true
+      },
+      {
+        "name": "getTutorialsByCategory",
+        "kind": "function",
+        "file": "src\\data\\tutorials.ts",
+        "line": 620,
+        "exported": true
+      },
+      {
+        "name": "POST",
+        "kind": "function",
+        "file": "src\\app\\api\\chat\\route.ts",
+        "line": 8,
+        "exported": true
+      },
+      {
+        "name": "searchTutorials",
+        "kind": "function",
+        "file": "src\\data\\tutorials.ts",
+        "line": 628,
+        "exported": true
+      },
+      {
+        "name": "SignInButton",
+        "kind": "function",
+        "file": "src\\components\\AuthButtons.tsx",
+        "line": 3,
+        "exported": true
+      },
+      {
+        "name": "SignOutButton",
+        "kind": "function",
+        "file": "src\\components\\AuthButtons.tsx",
+        "line": 21,
+        "exported": true
+      },
+      {
+        "name": "useFavorites",
+        "kind": "function",
+        "file": "src\\hooks\\useFavorites.ts",
+        "line": 7,
+        "exported": true
+      },
+      {
+        "name": "assistantId",
+        "kind": "function",
+        "file": "src\\components\\ChatModal.tsx",
+        "line": 72,
+        "exported": false
+      },
+      {
+        "name": "goToStep",
+        "kind": "function",
+        "file": "src\\app\\tutorial\\[slug]\\page.tsx",
+        "line": 36,
+        "exported": false
+      },
+      {
+        "name": "handleBack",
+        "kind": "function",
+        "file": "src\\app\\tutorial\\[slug]\\page.tsx",
+        "line": 42,
+        "exported": false
+      },
+      {
+        "name": "handleNext",
+        "kind": "function",
+        "file": "src\\app\\tutorial\\[slug]\\page.tsx",
+        "line": 41,
+        "exported": false
+      },
+      {
+        "name": "percentage",
+        "kind": "function",
+        "file": "src\\components\\ProgressBar.tsx",
+        "line": 7,
+        "exported": false
+      }
+    ],
+    "types": [],
+    "enums": []
+  },
+  "publicAPI": [
+    {
+      "name": "Category",
+      "kind": "interface",
+      "file": "src\\data\\tutorials.ts",
+      "line": 22,
+      "exported": true
+    },
+    {
+      "name": "getFeaturedTutorials",
+      "kind": "function",
+      "file": "src\\data\\tutorials.ts",
+      "line": 624,
+      "exported": true
+    },
+    {
+      "name": "getTutorialBySlug",
+      "kind": "function",
+      "file": "src\\data\\tutorials.ts",
+      "line": 616,
+      "exported": true
+    },
+    {
+      "name": "getTutorialsByCategory",
+      "kind": "function",
+      "file": "src\\data\\tutorials.ts",
+      "line": 620,
+      "exported": true
+    },
+    {
+      "name": "POST",
+      "kind": "function",
+      "file": "src\\app\\api\\chat\\route.ts",
+      "line": 8,
+      "exported": true
+    },
+    {
+      "name": "searchTutorials",
+      "kind": "function",
+      "file": "src\\data\\tutorials.ts",
+      "line": 628,
+      "exported": true
+    },
+    {
+      "name": "SignInButton",
+      "kind": "function",
+      "file": "src\\components\\AuthButtons.tsx",
+      "line": 3,
+      "exported": true
+    },
+    {
+      "name": "SignOutButton",
+      "kind": "function",
+      "file": "src\\components\\AuthButtons.tsx",
+      "line": 21,
+      "exported": true
+    },
+    {
+      "name": "Tutorial",
+      "kind": "interface",
+      "file": "src\\data\\tutorials.ts",
+      "line": 8,
+      "exported": true
+    },
+    {
+      "name": "TutorialStep",
+      "kind": "interface",
+      "file": "src\\data\\tutorials.ts",
+      "line": 1,
+      "exported": true
+    },
+    {
+      "name": "useFavorites",
+      "kind": "function",
+      "file": "src\\hooks\\useFavorites.ts",
+      "line": 7,
+      "exported": true
+    }
+  ],
+  "dependencies": {
+    "mostImported": [
+      {
+        "file": "src\\components\\Icon.tsx",
+        "importedBy": 10,
+        "description": "UI components"
+      },
+      {
+        "file": "src\\components\\ChatModal.tsx",
+        "importedBy": 1,
+        "description": "UI components"
+      },
+      {
+        "file": "src\\components\\HeaderNav.tsx",
+        "importedBy": 1,
+        "description": "UI components"
+      },
+      {
+        "file": "src\\components\\AuthButtons.tsx",
+        "importedBy": 1,
+        "description": "UI components"
+      },
+      {
+        "file": "src\\app\\perfil\\PerfilClient.tsx",
+        "importedBy": 1
+      }
+    ]
+  },
+  "stats": {
+    "totalSymbols": 27,
+    "exportedSymbols": 11,
+    "analysisTimeMs": 185
+  },
+  "keyFiles": [
+    {
+      "path": "eslint.config.mjs",
+      "description": "Tool configuration",
+      "category": "config"
+    },
+    {
+      "path": "next.config.ts",
+      "description": "Tool configuration",
+      "category": "config"
+    },
+    {
+      "path": "package.json",
+      "description": "Package manifest",
+      "category": "config"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "description": "Tool configuration",
+      "category": "config"
+    },
+    {
+      "path": "tsconfig.json",
+      "description": "TypeScript configuration",
+      "category": "config"
+    }
+  ],
+  "navigation": {
+    "tests": "src/**/*.test.ts",
+    "config": [
+      "package.json",
+      "tsconfig.json",
+      "next.config.ts"
+    ],
+    "types": [
+      "next-env.d.ts"
+    ],
+    "mainLogic": [
+      "src"
+    ]
+  }
+}
