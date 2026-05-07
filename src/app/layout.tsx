@@ -50,10 +50,11 @@ export default function RootLayout({
         />
         <meta name="theme-color" content="#006a34" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="default"
-        />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="Simple" />
+        <link rel="icon" href="/icon-192x192.png" />
+        <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
       <body className="bg-background text-on-background min-h-screen font-[family-name:var(--font-lexend)]">
         <SettingsProvider>
@@ -62,6 +63,21 @@ export default function RootLayout({
           <BottomNav />
           <HelpFAB />
         </SettingsProvider>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                    console.log('SW registered:', reg);
+                  }, function(err) {
+                    console.log('SW error:', err);
+                  });
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
