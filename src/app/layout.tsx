@@ -15,6 +15,7 @@ const lexend = Lexend({
 
 export const metadata: Metadata = {
   title: "Simple | Aprender é simples. Entender muda tudo.",
+  manifest: "/manifest.json",
   description:
     "O Simple é seu guia fácil e confiável para aprender a usar aplicativos e serviços digitais do dia a dia. Tutoriais passo a passo, explicações simples e links úteis para te ajudar.",
   keywords: [
