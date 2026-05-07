@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import HelpFAB from "@/components/HelpFAB";
+import { SettingsProvider } from "@/contexts/SettingsContext";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -13,7 +14,7 @@ const lexend = Lexend({
 });
 
 export const metadata: Metadata = {
-  title: "Simple — Aprender é simples. Entender muda tudo.",
+  title: "Simple | Aprender é simples. Entender muda tudo.",
   description:
     "O Simple é seu guia fácil e confiável para aprender a usar aplicativos e serviços digitais do dia a dia. Tutoriais passo a passo, explicações simples e links úteis para te ajudar.",
   keywords: [
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Simple App" }],
   openGraph: {
-    title: "Simple — Aprender é simples. Entender muda tudo.",
+    title: "Simple | Aprender é simples. Entender muda tudo.",
     description:
       "Tutoriais passo a passo para aprender a usar aplicativos e serviços digitais de forma simples.",
     type: "website",
@@ -54,10 +55,12 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-background text-on-background min-h-screen font-[family-name:var(--font-lexend)]">
-        <Header />
-        <main className="pb-24 md:pb-0">{children}</main>
-        <BottomNav />
-        <HelpFAB />
+        <SettingsProvider>
+          <Header />
+          <main className="pb-24 md:pb-0">{children}</main>
+          <BottomNav />
+          <HelpFAB />
+        </SettingsProvider>
       </body>
     </html>
   );

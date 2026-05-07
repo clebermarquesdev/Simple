@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Icon from "@/components/Icon";
 import Switch from "@/components/Switch";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface PerfilClientProps {
   user: {
@@ -14,8 +15,7 @@ interface PerfilClientProps {
 
 export default function PerfilClient({ user }: PerfilClientProps) {
   const [notifications, setNotifications] = useState(true);
-  const [highContrast, setHighContrast] = useState(false);
-  const [fontSize, setFontSize] = useState("medium"); // small, medium, large
+  const { fontSize, setFontSize, highContrast, setHighContrast } = useSettings();
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10 flex flex-col gap-8">
@@ -86,7 +86,7 @@ export default function PerfilClient({ user }: PerfilClientProps) {
             ].map((size) => (
               <button
                 key={size.id}
-                onClick={() => setFontSize(size.id)}
+                onClick={() => setFontSize(size.id as "small" | "medium" | "large")}
                 className={`
                   px-4 py-2 rounded-md text-sm font-semibold transition-all cursor-pointer flex-1 text-center
                   ${fontSize === size.id ? "bg-white shadow-md text-primary" : "text-on-surface-variant hover:text-on-surface"}
