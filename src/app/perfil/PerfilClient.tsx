@@ -14,8 +14,39 @@ interface PerfilClientProps {
 }
 
 export default function PerfilClient({ user }: PerfilClientProps) {
-  const [notifications, setNotifications] = useState(true);
-  const { fontSize, setFontSize, highContrast, setHighContrast } = useSettings();
+  const { 
+    fontSize, 
+    setFontSize, 
+    highContrast, 
+    setHighContrast, 
+    notificationsEnabled, 
+    setNotificationsEnabled 
+  } = useSettings();
+
+  const handleToggleNotifications = async (enabled: boolean) => {
+    if (enabled) {
+      // Request browser permission
+      if ("Notification" in window) {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          setNotificationsEnabled(true);
+          // Show a test notification
+          new Notification("Simple", {
+            body: "As notificações foram ativadas com sucesso!",
+            icon: "/icon-192x192.png"
+          });
+        } else {
+          alert("Para receber notificações, você precisa permitir nas configurações do seu navegador.");
+          setNotificationsEnabled(false);
+        }
+      } else {
+        alert("Seu navegador não suporta notificações.");
+        setNotificationsEnabled(false);
+      }
+    } else {
+      setNotificationsEnabled(false);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10 flex flex-col gap-8">
@@ -63,8 +94,8 @@ export default function PerfilClient({ user }: PerfilClientProps) {
             <p className="text-sm text-on-surface-variant">Receba lembretes de novos tutoriais</p>
           </div>
           <Switch 
-            checked={notifications} 
-            onChange={setNotifications} 
+            checked={notificationsEnabled} 
+            onChange={handleToggleNotifications} 
             ariaLabel="Ativar notificações" 
           />
         </div>

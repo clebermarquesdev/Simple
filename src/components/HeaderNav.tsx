@@ -8,14 +8,13 @@ const navItems = [
   { href: "/", label: "Início", icon: "home" },
   { href: "/categorias", label: "Categorias", icon: "grid_view" },
   { href: "/favoritos", label: "Favoritos", icon: "favorite" },
-  { href: "/perfil", label: "Perfil", icon: "person" },
 ];
 
 export default function HeaderNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="hidden md:flex gap-2 items-center">
+    <nav className="flex gap-2 items-center">
       {navItems.map((item) => {
         const isActive = pathname === item.href;
         return (

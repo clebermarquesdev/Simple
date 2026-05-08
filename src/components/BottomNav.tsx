@@ -8,7 +8,6 @@ const navItems = [
   { href: "/", label: "Início", icon: "home" },
   { href: "/categorias", label: "Categorias", icon: "grid_view" },
   { href: "/favoritos", label: "Favoritos", icon: "favorite" },
-  { href: "/perfil", label: "Perfil", icon: "person" },
 ];
 
 export default function BottomNav() {

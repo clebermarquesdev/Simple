@@ -9,6 +9,8 @@ interface SettingsContextData {
   setFontSize: (size: FontSize) => void;
   highContrast: boolean;
   setHighContrast: (contrast: boolean) => void;
+  notificationsEnabled: boolean;
+  setNotificationsEnabled: (enabled: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextData | undefined>(undefined);
@@ -17,15 +19,18 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   // Use lazy initialization or a useEffect to prevent hydration mismatch
   const [fontSize, setFontSizeState] = useState<FontSize>("medium");
   const [highContrast, setHighContrastState] = useState<boolean>(false);
+  const [notificationsEnabled, setNotificationsEnabledState] = useState<boolean>(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     // Load settings from localStorage on mount
     const storedFontSize = localStorage.getItem("@simple:fontSize") as FontSize;
     const storedHighContrast = localStorage.getItem("@simple:highContrast");
+    const storedNotifications = localStorage.getItem("@simple:notifications");
 
     if (storedFontSize) setFontSizeState(storedFontSize);
     if (storedHighContrast) setHighContrastState(storedHighContrast === "true");
+    if (storedNotifications) setNotificationsEnabledState(storedNotifications === "true");
     
     setMounted(true);
   }, []);
@@ -38,6 +43,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const setHighContrast = (contrast: boolean) => {
     setHighContrastState(contrast);
     localStorage.setItem("@simple:highContrast", String(contrast));
+  };
+
+  const setNotificationsEnabled = (enabled: boolean) => {
+    setNotificationsEnabledState(enabled);
+    localStorage.setItem("@simple:notifications", String(enabled));
   };
 
   // Apply settings to document.documentElement (html element)
@@ -70,6 +80,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         setFontSize,
         highContrast,
         setHighContrast,
+        notificationsEnabled,
+        setNotificationsEnabled,
       }}
     >
       {children}
