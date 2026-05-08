@@ -162,6 +162,15 @@ button {
   border-radius: var(--radius-sm);
 }
 
+/* Ensure borderless inputs don't show the global focus outline */
+input.border-0:focus, 
+input.border-0:focus-visible,
+input.border-none:focus,
+input.border-none:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* === Touch target helper === */
 .touch-target {
   min-width: 56px;

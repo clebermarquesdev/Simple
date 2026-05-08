@@ -31,7 +31,7 @@ export default function SearchBar({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full h-16 bg-transparent border-none focus:ring-0 focus:outline-none text-lg text-gray-800 px-4 placeholder-gray-400 font-medium"
+          className="w-full h-16 bg-transparent border-0 ring-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 text-lg text-gray-800 px-4 placeholder-gray-400 font-medium shadow-none"
           placeholder={placeholder}
           aria-label="Buscar tutoriais"
         />
