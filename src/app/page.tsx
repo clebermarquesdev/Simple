@@ -45,12 +45,7 @@ export default function HomePage() {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-6 mt-6 flex flex-col gap-10">
-      {/* Mobile Tagline */}
-      <div className="md:hidden text-center -mb-4">
-        <p className="text-lg text-on-surface-variant">
-          Aprender é simples. Entender muda tudo.
-        </p>
-      </div>
+
 
       {/* Search Bar */}
       <section className="w-full flex justify-center">
