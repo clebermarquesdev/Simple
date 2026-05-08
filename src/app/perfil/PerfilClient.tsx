@@ -70,15 +70,17 @@ export default function PerfilClient({ user }: PerfilClientProps) {
         </div>
 
         {/* Font Size Setting */}
-        <div className="bg-surface-container-lowest rounded-xl p-4 flex items-center gap-4 card-shadow border border-surface-container">
-          <div className="min-w-[56px] min-h-[56px] bg-surface-container-high rounded-xl flex items-center justify-center">
-            <Icon name="text_increase" className="text-2xl text-on-surface-variant" />
+        <div className="bg-surface-container-lowest rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-4 card-shadow border border-surface-container">
+          <div className="flex items-center gap-4">
+            <div className="min-w-[56px] min-h-[56px] bg-surface-container-high rounded-xl flex items-center justify-center">
+              <Icon name="text_increase" className="text-2xl text-on-surface-variant" />
+            </div>
+            <div className="flex-1">
+              <p className="text-lg font-medium text-on-surface">Tamanho do texto</p>
+              <p className="text-sm text-on-surface-variant">Ajuste o tamanho da fonte para leitura</p>
+            </div>
           </div>
-          <div className="flex-1">
-            <p className="text-lg font-medium text-on-surface">Tamanho do texto</p>
-            <p className="text-sm text-on-surface-variant">Ajuste o tamanho da fonte para leitura</p>
-          </div>
-          <div className="flex bg-surface-container-low rounded-lg p-1 gap-1">
+          <div className="flex bg-surface-container-low rounded-lg p-1 gap-1 w-full sm:w-auto">
             {[
               { id: "small", label: "Pequeno" },
               { id: "medium", label: "Padrão" },
@@ -88,7 +90,7 @@ export default function PerfilClient({ user }: PerfilClientProps) {
                 key={size.id}
                 onClick={() => setFontSize(size.id as "small" | "medium" | "large")}
                 className={`
-                  px-4 py-2 rounded-md text-sm font-semibold transition-all cursor-pointer flex-1 text-center
+                  px-3 sm:px-4 py-2 rounded-md text-sm font-semibold transition-all cursor-pointer flex-1 text-center
                   ${fontSize === size.id ? "bg-white shadow-md text-primary" : "text-on-surface-variant hover:text-on-surface"}
                 `}
               >
