@@ -11,15 +11,17 @@ interface SettingsContextData {
   setHighContrast: (contrast: boolean) => void;
   notificationsEnabled: boolean;
   setNotificationsEnabled: (enabled: boolean) => void;
+  darkMode: boolean;
+  setDarkMode: (dark: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextData | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  // Use lazy initialization or a useEffect to prevent hydration mismatch
   const [fontSize, setFontSizeState] = useState<FontSize>("medium");
   const [highContrast, setHighContrastState] = useState<boolean>(false);
   const [notificationsEnabled, setNotificationsEnabledState] = useState<boolean>(false);
+  const [darkMode, setDarkModeState] = useState<boolean>(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -27,10 +29,18 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     const storedFontSize = localStorage.getItem("@simple:fontSize") as FontSize;
     const storedHighContrast = localStorage.getItem("@simple:highContrast");
     const storedNotifications = localStorage.getItem("@simple:notifications");
+    const storedDarkMode = localStorage.getItem("@simple:darkMode");
 
     if (storedFontSize) setFontSizeState(storedFontSize);
     if (storedHighContrast) setHighContrastState(storedHighContrast === "true");
     if (storedNotifications) setNotificationsEnabledState(storedNotifications === "true");
+    
+    // Dark mode: check localStorage, then system preference
+    if (storedDarkMode !== null) {
+      setDarkModeState(storedDarkMode === "true");
+    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      setDarkModeState(true);
+    }
     
     setMounted(true);
   }, []);
@@ -50,6 +60,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("@simple:notifications", String(enabled));
   };
 
+  const setDarkMode = (dark: boolean) => {
+    setDarkModeState(dark);
+    localStorage.setItem("@simple:darkMode", String(dark));
+  };
+
   // Apply settings to document.documentElement (html element)
   useEffect(() => {
     if (!mounted) return;
@@ -66,13 +81,21 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     } else {
       html.classList.remove("high-contrast");
     }
-  }, [fontSize, highContrast, mounted]);
 
-  // Don't render children until mounted to prevent hydration errors 
-  // since server rendering would not have the localStorage values
-  // Alternatively, just render it and handle a slight flicker. We'll render immediately 
-  // to avoid blocking the whole app, but HTML classes will apply post-hydration.
-  
+    // Toggle dark mode class
+    if (darkMode) {
+      html.classList.add("dark");
+    } else {
+      html.classList.remove("dark");
+    }
+
+    // Update theme-color meta tag
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute("content", darkMode ? "#0f1729" : "#006a34");
+    }
+  }, [fontSize, highContrast, darkMode, mounted]);
+
   return (
     <SettingsContext.Provider
       value={{
@@ -82,6 +105,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         setHighContrast,
         notificationsEnabled,
         setNotificationsEnabled,
+        darkMode,
+        setDarkMode,
       }}
     >
       {children}

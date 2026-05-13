@@ -23,8 +23,8 @@ export default function HeaderNav() {
             href={item.href}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 active:scale-95 ${
               isActive
-                ? "text-brand-green font-bold bg-emerald-50"
-                : "text-gray-500 hover:text-emerald-600 hover:bg-gray-50"
+                ? "text-brand-green font-bold bg-primary-fixed/20"
+                : "text-on-surface-variant hover:text-brand-green hover:bg-surface-container-low"
             }`}
           >
             <Icon name={item.icon} filled={isActive} />
@@ -35,3 +35,4 @@ export default function HeaderNav() {
     </nav>
   );
 }
+

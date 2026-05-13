@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState, use, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getTutorialBySlug } from "@/data/tutorials";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -17,6 +17,10 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
   const [currentStep, setCurrentStep] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [viewMode, setViewMode] = useState<'carousel' | 'list'>('carousel');
+  
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const touchStartX = useRef<number>(0);
 
   if (!tutorial) {
     return (
@@ -40,6 +44,51 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
 
   const handleNext = () => { if (isLast) setIsComplete(true); else goToStep(currentStep + 1); };
   const handleBack = () => { if (currentStep > 0) goToStep(currentStep - 1); else router.back(); };
+
+  // --- Auto-advance Inactivity Timer ---
+  const resetTimer = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    // Only auto-advance if we are in carousel mode, not complete, and NOT on the last step
+    if (viewMode === 'carousel' && !isComplete && !isLast) {
+      timerRef.current = setTimeout(() => {
+        handleNext();
+      }, 60000); // 1 minute of inactivity
+    }
+  };
+
+  useEffect(() => {
+    resetTimer();
+    const events = ['touchstart', 'mousemove', 'keydown', 'scroll', 'click'];
+    const handleInteraction = () => resetTimer();
+    events.forEach(e => window.addEventListener(e, handleInteraction));
+    
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      events.forEach(e => window.removeEventListener(e, handleInteraction));
+    };
+  }, [currentStep, viewMode, isComplete, isLast]);
+
+  // --- Swipe Gestures ---
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (viewMode !== 'carousel') return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX;
+    
+    // threshold of 50px
+    if (Math.abs(diff) > 50) {
+      if (diff > 0 && !isLast) {
+        // swiped left -> next
+        handleNext();
+      } else if (diff < 0 && currentStep > 0) {
+        // swiped right -> back
+        handleBack();
+      }
+    }
+  };
 
   if (isComplete) {
     return (
@@ -66,8 +115,18 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
         )}
 
         <div className="flex flex-col gap-3 w-full max-w-sm">
+          {tutorial.siteUrl && (
+            <a
+              href={tutorial.siteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-secondary text-on-secondary min-h-[56px] rounded-xl font-semibold text-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all hover:shadow-lg"
+            >
+              <Icon name="open_in_new" /> Acessar o Site
+            </a>
+          )}
           {!isFavorite(tutorial.slug) && (
-            <button onClick={() => toggleFavorite(tutorial.slug)} className="w-full bg-secondary text-on-secondary min-h-[56px] rounded-xl font-semibold text-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+            <button onClick={() => toggleFavorite(tutorial.slug)} className="w-full border-2 border-secondary text-secondary min-h-[56px] rounded-xl font-semibold text-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all hover:bg-secondary/10">
               <Icon name="star" /> Salvar nos Favoritos
             </button>
           )}
@@ -84,24 +143,88 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
 
   return (
     <>
-      <header className="bg-white border-b-2 border-gray-100 shadow-sm flex items-center justify-between px-6 h-20 w-full sticky top-0 z-50">
-        <button onClick={handleBack} className="flex items-center justify-center w-[56px] h-[56px] active:scale-95 text-gray-500 hover:bg-gray-50 rounded-full" aria-label="Voltar">
+      <header className="bg-surface-container-lowest border-b-2 border-outline-variant shadow-sm flex items-center justify-between px-6 h-20 w-full sticky top-0 z-50 transition-colors duration-300">
+        <button onClick={handleBack} className="flex items-center justify-center w-[56px] h-[56px] active:scale-95 text-on-surface-variant hover:bg-surface-container-low rounded-full" aria-label="Voltar">
           <Icon name="arrow_back" size={28} />
         </button>
         <h1 className="text-brand-green font-bold text-xl text-center flex-1">{tutorial.title}</h1>
-        <button onClick={() => toggleFavorite(tutorial.slug)} className="flex items-center justify-center w-[56px] h-[56px] active:scale-95 rounded-full hover:bg-gray-50" aria-label="Favoritar">
-          <Icon name={isFavorite(tutorial.slug) ? "star" : "star_border"} filled={isFavorite(tutorial.slug)} className={`text-2xl ${isFavorite(tutorial.slug) ? "text-yellow-500" : "text-gray-400"}`} />
+        <button onClick={() => toggleFavorite(tutorial.slug)} className="flex items-center justify-center w-[56px] h-[56px] active:scale-95 rounded-full hover:bg-surface-container-low" aria-label="Favoritar">
+          <Icon name={isFavorite(tutorial.slug) ? "star" : "star_border"} filled={isFavorite(tutorial.slug)} className={`text-2xl ${isFavorite(tutorial.slug) ? "text-yellow-500" : "text-outline"}`} />
         </button>
       </header>
-      <div className="flex-1 flex flex-col w-full max-w-2xl mx-auto px-6 py-4 md:py-10 gap-4">
-        <div className="pt-4"><ProgressBar current={currentStep + 1} total={totalSteps} /></div>
-        <StepView step={tutorial.steps[currentStep]} isTransitioning={isTransitioning} />
-        <div className="mt-auto pt-8 flex flex-col gap-4 pb-8">
-          <button onClick={handleNext} className="w-full bg-primary text-on-primary min-h-[56px] rounded-xl font-semibold text-xl flex items-center justify-center shadow-md active:scale-[0.98] transition-all gap-2">
-            {isLast ? "Concluir Tutorial" : "Próximo Passo"} <Icon name={isLast ? "check" : "arrow_forward"} />
-          </button>
-          <button onClick={handleBack} className="w-full min-h-[56px] text-primary font-semibold text-xl flex items-center justify-center hover:bg-surface-container-low rounded-xl transition-colors">Voltar</button>
+      <div className="flex-1 flex flex-col w-full max-w-2xl mx-auto px-6 py-4 md:py-6 gap-4">
+        {/* View Mode Toggle */}
+        <div className="flex justify-center mb-2">
+          <div className="bg-surface-container-low p-1 rounded-xl inline-flex gap-1 shadow-inner">
+            <button
+              onClick={() => setViewMode('carousel')}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all ${viewMode === 'carousel' ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+            >
+              <Icon name="view_carousel" size={20} /> Carrossel
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all ${viewMode === 'list' ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+            >
+              <Icon name="view_stream" size={20} /> Lista Contínua
+            </button>
+          </div>
         </div>
+
+        {viewMode === 'list' ? (
+          /* List Mode (Long Screenshot) */
+          <div className="flex flex-col gap-12 pt-4">
+            {tutorial.steps.map((step, index) => (
+              <div key={index} className="relative">
+                <div className="absolute -left-3 top-0 bottom-0 w-1 bg-surface-container-high rounded-full overflow-hidden">
+                  <div className="h-full bg-primary/20 w-full" />
+                </div>
+                <div className="pl-4">
+                  <div className="text-sm font-bold text-primary mb-3 tracking-wider uppercase">Passo {index + 1}</div>
+                  <StepView step={step} isTransitioning={false} />
+                </div>
+              </div>
+            ))}
+            
+            <div className="mt-8 pt-8 border-t border-outline-variant flex flex-col gap-4 mb-8">
+              <button onClick={() => setIsComplete(true)} className="w-full bg-primary text-on-primary min-h-[56px] rounded-xl font-semibold text-xl flex items-center justify-center shadow-md active:scale-[0.98] transition-all gap-2">
+                Concluir Tutorial <Icon name="check" />
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Carousel Mode */
+          <div 
+            className="flex-1 flex flex-col w-full"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            <ProgressBar current={currentStep + 1} total={totalSteps} />
+            <div className="mt-4">
+              <StepView step={tutorial.steps[currentStep]} isTransitioning={isTransitioning} />
+            </div>
+
+            {/* Site link during tutorial */}
+            {tutorial.siteUrl && (
+              <a
+                href={tutorial.siteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 text-sm font-medium px-4 py-2.5 rounded-xl border-2 border-dashed border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-200 mx-auto mt-6"
+              >
+                <Icon name="open_in_new" size={18} />
+                <span>Abrir o site: <strong className="text-on-surface">{new URL(tutorial.siteUrl).hostname.replace('www.', '')}</strong></span>
+              </a>
+            )}
+
+            <div className="mt-auto pt-8 flex flex-col gap-4 pb-8">
+              <button onClick={handleNext} className="w-full bg-primary text-on-primary min-h-[56px] rounded-xl font-semibold text-xl flex items-center justify-center shadow-md active:scale-[0.98] transition-all gap-2">
+                {isLast ? "Concluir Tutorial" : "Próximo Passo"} <Icon name={isLast ? "check" : "arrow_forward"} />
+              </button>
+              <button onClick={handleBack} className="w-full min-h-[56px] text-primary font-semibold text-xl flex items-center justify-center hover:bg-surface-container-low rounded-xl transition-colors">Voltar</button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

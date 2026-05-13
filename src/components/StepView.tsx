@@ -36,7 +36,7 @@ export default function StepView({ step, isTransitioning }: StepViewProps) {
         )}
         {/* Tip overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-surface-container-highest/80 to-transparent flex items-end p-6">
-          <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 border border-outline-variant/50 shadow-lg flex items-start gap-4 max-w-sm">
+          <div className="bg-surface-container-lowest/90 backdrop-blur-md rounded-lg p-4 border border-outline-variant/50 shadow-lg flex items-start gap-4 max-w-sm">
             <div className="w-12 h-12 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center shrink-0">
               <Icon name="lightbulb" filled size={28} />
             </div>

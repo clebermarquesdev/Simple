@@ -17,6 +17,7 @@ export interface Tutorial {
   featured: boolean;
   steps: TutorialStep[];
   videoUrl?: string;
+  siteUrl?: string;
 }
 
 export interface Category {
@@ -128,6 +129,7 @@ export const tutorials: Tutorial[] = [
       },
     ],
     videoUrl: "https://www.youtube.com/embed/o4YEEm2F2Dw",
+    siteUrl: "https://www.bcb.gov.br/estabilidadefinanceira/pix",
   },
   {
     slug: "como-usar-whatsapp",
@@ -178,6 +180,7 @@ export const tutorials: Tutorial[] = [
       },
     ],
     videoUrl: "https://www.youtube.com/embed/ghIsVurSs-o",
+    siteUrl: "https://www.whatsapp.com",
   },
   {
     slug: "como-pagar-boleto",
@@ -264,6 +267,7 @@ export const tutorials: Tutorial[] = [
       },
     ],
     videoUrl: "https://www.youtube.com/embed/kQf6SoFlNDo",
+    siteUrl: "https://www.gov.br",
   },
   {
     slug: "seguranca-digital-basica",
@@ -326,6 +330,7 @@ export const tutorials: Tutorial[] = [
       }
     ],
     videoUrl: "https://www.youtube.com/embed/gjcnkPxkv8s",
+    siteUrl: "https://www.fgts.gov.br",
   },
   {
     slug: "como-usar-inss",
@@ -370,6 +375,7 @@ export const tutorials: Tutorial[] = [
       }
     ],
     videoUrl: "https://www.youtube.com/embed/u3Mf_DLNqUM",
+    siteUrl: "https://meu.inss.gov.br",
   },
   {
     slug: "usar-facebook-basico",
@@ -414,6 +420,7 @@ export const tutorials: Tutorial[] = [
       }
     ],
     videoUrl: "https://www.youtube.com/embed/BszYeoeiHF0",
+    siteUrl: "https://www.facebook.com",
   },
   {
     slug: "usar-instagram-basico",
@@ -458,6 +465,7 @@ export const tutorials: Tutorial[] = [
       }
     ],
     videoUrl: "https://www.youtube.com/embed/PQULFL8biAs",
+    siteUrl: "https://www.instagram.com",
   },
   {
     slug: "como-pedir-uber",
@@ -496,6 +504,7 @@ export const tutorials: Tutorial[] = [
       }
     ],
     videoUrl: "https://www.youtube.com/embed/06KtCd3_kqA",
+    siteUrl: "https://www.uber.com/br/pt-br/",
   },
   {
     slug: "como-pedir-99",
@@ -534,6 +543,7 @@ export const tutorials: Tutorial[] = [
       }
     ],
     videoUrl: "https://www.youtube.com/embed/Bi-H6zb07JU?start=5",
+    siteUrl: "https://99app.com",
   },
   {
     slug: "como-usar-mercado-livre",
@@ -572,6 +582,7 @@ export const tutorials: Tutorial[] = [
       }
     ],
     videoUrl: "https://www.youtube.com/embed/2pXtTkD8jYg",
+    siteUrl: "https://www.mercadolivre.com.br",
   },
   {
     slug: "como-usar-shopee",
@@ -610,6 +621,7 @@ export const tutorials: Tutorial[] = [
       }
     ],
     videoUrl: "https://www.youtube.com/embed/SG3dZV3hcNo",
+    siteUrl: "https://shopee.com.br",
   },
 ];
 

@@ -4,12 +4,13 @@ import HeaderNav from "./HeaderNav";
 import { auth } from "@/auth";
 import { SignInButton } from "./AuthButtons";
 import UserMenu from "./UserMenu";
+import DarkModeToggle from "./DarkModeToggle";
 
 export default async function Header() {
   const session = await auth();
 
   return (
-    <header className="bg-white border-b border-gray-100 shadow-sm flex items-center justify-between px-4 md:px-8 h-16 w-full sticky top-0 z-50">
+    <header className="bg-surface-container-lowest border-b border-outline-variant shadow-sm flex items-center justify-between px-4 md:px-8 h-16 w-full sticky top-0 z-50 transition-colors duration-300">
       {/* Left: Logo */}
       <div className="flex-1 flex justify-start">
         <Link href="/" className="flex items-center gap-3 group">
@@ -30,8 +31,9 @@ export default async function Header() {
         <HeaderNav />
       </div>
 
-      {/* Right: User Identity / Auth */}
-      <div className="flex-1 flex justify-end items-center gap-4">
+      {/* Right: Dark Mode Toggle + User Identity / Auth */}
+      <div className="flex-1 flex justify-end items-center gap-2">
+        <DarkModeToggle />
         {session?.user ? (
           <UserMenu user={session.user} />
         ) : (
@@ -41,3 +43,4 @@ export default async function Header() {
     </header>
   );
 }
+

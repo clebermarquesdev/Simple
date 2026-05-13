@@ -64,6 +64,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                 description={tutorial.description}
                 image={tutorial.image}
                 difficulty={tutorial.difficulty}
+                siteUrl={tutorial.siteUrl}
               />
             ))}
           </div>

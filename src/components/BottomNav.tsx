@@ -17,7 +17,7 @@ export default function BottomNav() {
   if (pathname.startsWith("/tutorial/")) return null;
 
   return (
-    <nav className="md:hidden bg-white fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe rounded-t-2xl border-t-2 border-gray-100 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+    <nav className="md:hidden bg-surface-container-lowest fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe rounded-t-2xl border-t-2 border-outline-variant shadow-[0_-4px_12px_rgba(0,0,0,0.05)] transition-colors duration-300">
       {navItems.map((item) => {
         const isActive = pathname === item.href;
         return (
@@ -26,8 +26,8 @@ export default function BottomNav() {
             href={item.href}
             className={`flex flex-col items-center justify-center transition-all duration-300 touch-manipulation min-w-[56px] min-h-[56px] ${
               isActive
-                ? "text-brand-green bg-emerald-50 rounded-xl px-4 py-2"
-                : "text-gray-500 p-2 hover:text-emerald-600 active:scale-90"
+                ? "text-brand-green bg-primary-fixed/20 rounded-xl px-4 py-2"
+                : "text-on-surface-variant p-2 hover:text-brand-green active:scale-90"
             }`}
           >
             <Icon
@@ -44,3 +44,4 @@ export default function BottomNav() {
     </nav>
   );
 }
+

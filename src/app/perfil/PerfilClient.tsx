@@ -20,7 +20,9 @@ export default function PerfilClient({ user }: PerfilClientProps) {
     highContrast, 
     setHighContrast, 
     notificationsEnabled, 
-    setNotificationsEnabled 
+    setNotificationsEnabled,
+    darkMode,
+    setDarkMode,
   } = useSettings();
 
   const handleToggleNotifications = async (enabled: boolean) => {
@@ -61,7 +63,7 @@ export default function PerfilClient({ user }: PerfilClientProps) {
 
       {/* Profile Card */}
       <div className="bg-surface-container-lowest rounded-2xl p-8 card-shadow border border-surface-container flex flex-col items-center text-center gap-4">
-        <div className="w-24 h-24 bg-primary-fixed rounded-full flex items-center justify-center overflow-hidden border-4 border-emerald-100 shadow-inner">
+        <div className="w-24 h-24 bg-primary-fixed rounded-full flex items-center justify-center overflow-hidden border-4 border-primary-fixed-dim shadow-inner">
           {user?.image ? (
             <img 
               src={user.image} 
@@ -83,6 +85,22 @@ export default function PerfilClient({ user }: PerfilClientProps) {
       {/* Settings List */}
       <div className="flex flex-col gap-4">
         <h3 className="text-xl font-semibold text-on-surface mb-2">Configurações</h3>
+
+        {/* Dark Mode Setting */}
+        <div className="bg-surface-container-lowest rounded-xl p-4 flex items-center gap-4 card-shadow border border-surface-container">
+          <div className="min-w-[56px] min-h-[56px] bg-surface-container-high rounded-xl flex items-center justify-center">
+            <Icon name="dark_mode" className="text-2xl text-on-surface-variant" />
+          </div>
+          <div className="flex-1">
+            <p className="text-lg font-medium text-on-surface">Modo escuro</p>
+            <p className="text-sm text-on-surface-variant">Alterne entre tema claro e escuro</p>
+          </div>
+          <Switch 
+            checked={darkMode} 
+            onChange={setDarkMode} 
+            ariaLabel="Ativar modo escuro" 
+          />
+        </div>
 
         {/* Notifications Setting */}
         <div className="bg-surface-container-lowest rounded-xl p-4 flex items-center gap-4 card-shadow border border-surface-container">
@@ -122,7 +140,7 @@ export default function PerfilClient({ user }: PerfilClientProps) {
                 onClick={() => setFontSize(size.id as "small" | "medium" | "large")}
                 className={`
                   px-3 sm:px-4 py-2 rounded-md text-sm font-semibold transition-all cursor-pointer flex-1 text-center
-                  ${fontSize === size.id ? "bg-white shadow-md text-primary" : "text-on-surface-variant hover:text-on-surface"}
+                  ${fontSize === size.id ? "bg-surface-container-lowest shadow-md text-primary" : "text-on-surface-variant hover:text-on-surface"}
                 `}
               >
                 {size.label}
@@ -162,3 +180,4 @@ export default function PerfilClient({ user }: PerfilClientProps) {
     </div>
   );
 }
+

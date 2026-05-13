@@ -66,6 +66,19 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
+              // Anti-flash: apply dark mode before paint
+              (function() {
+                try {
+                  var stored = localStorage.getItem('@simple:darkMode');
+                  var isDark = stored !== null ? stored === 'true' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    var meta = document.querySelector('meta[name="theme-color"]');
+                    if (meta) meta.setAttribute('content', '#0f1729');
+                  }
+                } catch(e) {}
+              })();
+              // Service Worker
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
                   navigator.serviceWorker.register('/sw.js').then(function(reg) {

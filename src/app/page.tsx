@@ -80,6 +80,7 @@ export default function HomePage() {
                   description={tutorial.description}
                   image={tutorial.image}
                   difficulty={tutorial.difficulty}
+                  siteUrl={tutorial.siteUrl}
                 />
               ))}
             </div>
@@ -123,6 +124,7 @@ export default function HomePage() {
                   description={tutorial.description}
                   image={tutorial.image}
                   difficulty={tutorial.difficulty}
+                  siteUrl={tutorial.siteUrl}
                 />
               ))}
             </div>

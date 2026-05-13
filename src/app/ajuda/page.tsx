@@ -48,7 +48,7 @@ export default function AjudaPage() {
             className="bg-surface-container-lowest p-8 rounded-2xl border border-surface-container card-shadow transition-all hover:border-brand-green group"
           >
             <div className="flex gap-5">
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 group-hover:bg-emerald-100 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-primary-fixed/20 flex items-center justify-center shrink-0 group-hover:bg-primary-fixed/30 transition-colors">
                 <Icon name={faq.icon} filled className="text-2xl text-brand-green" />
               </div>
               <div className="flex flex-col gap-2">
@@ -74,7 +74,7 @@ export default function AjudaPage() {
         </div>
         <Link 
           href="/"
-          className="bg-white text-brand-green px-8 py-3 rounded-xl font-bold text-lg hover:bg-emerald-50 transition-colors shadow-lg active:scale-95"
+          className="bg-surface-container-lowest text-brand-green px-8 py-3 rounded-xl font-bold text-lg hover:bg-primary-fixed/20 transition-colors shadow-lg active:scale-95"
         >
           Voltar para o Início
         </Link>
