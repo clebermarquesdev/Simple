@@ -4,13 +4,12 @@ import Image from "next/image";
 import Icon from "./Icon";
 import type { TutorialStep } from "@/data/tutorials";
 
-import type { ReturnType } from "react";
-import type { useTextToSpeech } from "@/hooks/useTextToSpeech";
+import type { UseTextToSpeechResult } from "@/hooks/useTextToSpeech";
 
 interface StepViewProps {
   step: TutorialStep;
   isTransitioning: boolean;
-  tts?: ReturnType<typeof useTextToSpeech>;
+  tts?: UseTextToSpeechResult;
   stepTextToRead?: string;
 }
 
@@ -58,7 +57,6 @@ export default function StepView({ step, isTransitioning, tts, stepTextToRead }:
         <p className="text-xl text-on-surface-variant leading-relaxed">
           {step.instruction}
         </p>
-      </div>
       </div>
 
       {/* Audio Controls */}

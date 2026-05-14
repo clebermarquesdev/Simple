@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 type SpeechStatus = "idle" | "playing" | "paused";
 
-interface UseTextToSpeechResult {
+export interface UseTextToSpeechResult {
   isSupported: boolean;
   status: SpeechStatus;
   rate: number;
