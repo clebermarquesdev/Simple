@@ -28,34 +28,34 @@ export async function POST(req: Request) {
 
   try {
     const { messages } = await req.json();
-    // 1. Histórico curtíssimo para economizar tokens (3 mensagens)
-    const lastMessages = messages.slice(-3);
-    
-    // 2. Títulos apenas para economizar tokens
-    const tutorialsList = tutorials.map(t => `- ${t.title}`).join("\n");
+    // Constrói o contexto com os tutoriais disponíveis para a IA ler
+    const tutorialsContext = tutorials.map(t => 
+      `- APLICATIVO/TEMA: ${t.title}
+       Resumo: ${t.description}
+       Passo-a-passo: ${t.steps.map(s => `[${s.title}: ${s.instruction}]`).join(" -> ")}`
+    ).join("\n\n");
 
-    // 3. Busca tutorial relevante
-    const userQuery = messages[messages.length - 1].content.toLowerCase();
-    const relevant = tutorials.find(t => 
-      userQuery.includes(t.title.toLowerCase().replace('como ', '').split(' ')[0])
-    );
+    const systemPrompt = `Você é o "Tutor Simple", um assistente virtual extremamente paciente, carinhoso e amigável.
+Seu objetivo principal é ajudar pessoas com pouca experiência em tecnologia (como idosos ou iniciantes) a usar o celular e aplicativos do dia a dia.
 
-    const context = relevant 
-      ? `TUTORIAL RELEVANTE:\n${relevant.title}: ${relevant.steps.map((s, i) => `${i+1}. ${s.title}: ${s.instruction}`).join("\n")}`
-      : `LISTA DE TUTORIAIS DISPONÍVEIS (se precisar de detalhes sobre um deles, peça ao usuário para ser mais específico):\n${tutorialsList}`;
+REGRAS DE OURO:
+1. NUNCA use jargões técnicos complexos (como "URL", "Cache", "Navegador", "Bug", "Download"). Explique tudo usando palavras simples. Em vez de "faça o download do app", diga "baixe o aplicativo na lojinha do seu celular".
+2. Responda de forma curta e direta (máximo de 3 parágrafos curtos). Ninguém gosta de ler textos enormes no celular.
+3. Seja encorajador! Use frases como "Fique tranquilo", "É normal ter dúvidas", "Você está indo muito bem".
+4. Use alguns emojis simpáticos e amigáveis, como 😊, 📱, ✨, 👍.
 
-    const systemPrompt = `Você é o "Tutor Simple", um assistente carinhoso para idosos.
-REGRAS:
-1. Respostas CURTÍSSIMAS (máximo 2 parágrafos).
-2. Sem termos técnicos.
-3. Use o contexto abaixo:
+TUTORIAIS DA PLATAFORMA SIMPLE:
+Você tem acesso aos seguintes tutoriais que existem no aplicativo. Quando a dúvida for sobre um deles, baseie-se estritamente nestes passos:
+---
+${tutorialsContext}
+---
 
-${context}`;
+Se o usuário perguntar como fazer algo listado acima, ensine o passo-a-passo com muita clareza.
+Se ele perguntar sobre um aplicativo ou função que não está na lista acima, responda educadamente ensinando como puder (se você souber), mas lembre-o de forma gentil de que você é especialista nos tutoriais listados.`;
 
-    // 4. Usando o modelo Gemini 2.0 Flash Lite Free - Atualmente o mais estável e rápido no OpenRouter
     const result = await streamText({
-      model: openrouter('google/gemini-2.0-flash-lite-preview-02-05:free'),
-      messages: lastMessages,
+      model: openrouter('openrouter/free'),
+      messages,
       system: systemPrompt,
     });
 
