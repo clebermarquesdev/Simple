@@ -52,34 +52,51 @@ REGRAS:
 
 ${context}`;
 
-    const result = streamText({
-      model: openrouter('openrouter/free'),
-      messages: lastMessages,
-      system: systemPrompt,
-      onError: ({ error }) => {
-        console.error('🔥 ERRO INTERNO NO STREAMTEXT:', error);
-      }
-    });
+    // 4. Lista de modelos gratuitos para tentar em sequência caso um falhe (Fallback)
+    const modelsToTry = [
+      'meta-llama/llama-3.3-70b-instruct:free',
+      'google/gemini-2.0-flash-lite-preview-02-05:free',
+      'deepseek/deepseek-chat:free',
+      'openrouter/free'
+    ];
 
-    return result.toTextStreamResponse();
+    let lastError: any = null;
+
+    for (const modelId of modelsToTry) {
+      try {
+        console.log(`Tentando modelo: ${modelId}`);
+        const result = await streamText({
+          model: openrouter(modelId),
+          messages: lastMessages,
+          system: systemPrompt,
+          maxTokens: 500,
+          temperature: 0.7,
+        });
+
+        // Se conseguiu iniciar o stream, retorna a resposta
+        return result.toTextStreamResponse();
+      } catch (error) {
+        console.error(`Falha no modelo ${modelId}:`, error);
+        lastError = error;
+        // Continua para o próximo modelo se for erro de limite (429) ou sobrecarga (503/500)
+        continue;
+      }
+    }
+
+    // Se todos falharem
+    throw lastError || new Error('Todos os modelos gratuitos falharam');
+
   } catch (error: unknown) {
-    console.error('Erro na API de chat:', error);
+    console.error('Erro final na API de chat:', error);
     
-    // Detecta erros de cota/rate limit
     const errorMessage = error instanceof Error ? error.message : String(error);
     
-    if (errorMessage.includes('429') || errorMessage.includes('RESOURCE_EXHAUSTED') || errorMessage.includes('quota') || errorMessage.includes('credits')) {
-      return new Response(
-        JSON.stringify({ 
-          error: '⚠️ O limite de uso da API foi atingido (ou saldo insuficiente no OpenRouter). Aguarde ou adicione créditos.' 
-        }),
-        { status: 429, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-    
+    // Resposta amigável de erro
     return new Response(
-      JSON.stringify({ error: 'Erro interno do servidor. Verifique o console para detalhes.' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        error: '⚠️ O sistema está muito ocupado no momento. Por favor, aguarde 10 segundos e tente enviar sua mensagem novamente.' 
+      }),
+      { status: 429, headers: { 'Content-Type': 'application/json' } }
     );
   }
 }
