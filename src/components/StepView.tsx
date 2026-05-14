@@ -64,10 +64,10 @@ export default function StepView({ step, isTransitioning, tts, stepTextToRead }:
                 else if (tts.status === 'paused') tts.resume();
                 else tts.play(stepTextToRead);
               }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold transition-all active:scale-95 shrink-0 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all active:scale-95 shrink-0 shadow-sm border-2 ${
                 tts.status === 'playing' 
-                  ? 'bg-primary text-on-primary animate-pulse' 
-                  : 'bg-surface-container-high text-primary hover:bg-primary/10'
+                  ? 'bg-primary text-on-primary border-primary animate-pulse' 
+                  : 'bg-surface-container-lowest text-primary border-outline-variant hover:border-primary hover:bg-primary/5'
               }`}
             >
               <Icon name={tts.status === 'playing' ? "pause" : "volume_up"} size={20} />

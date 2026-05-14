@@ -72,23 +72,11 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
     const handleInteraction = () => resetTimer();
     events.forEach(e => window.addEventListener(e, handleInteraction));
     
-    // --- Auto-play Audio on Step Change ---
-    let autoPlayTimeout: NodeJS.Timeout;
-    if (viewMode === 'carousel' && !isComplete && !isTransitioning) {
-      autoPlayTimeout = setTimeout(() => {
-        const currentStepData = tutorial.steps[currentStep];
-        if (currentStepData) {
-          tts.play(getStepTextToRead(currentStepData));
-        }
-      }, 1000); // 1 second delay
-    }
-
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      if (autoPlayTimeout) clearTimeout(autoPlayTimeout);
       events.forEach(e => window.removeEventListener(e, handleInteraction));
     };
-  }, [currentStep, viewMode, isComplete, isLast, tts.status, isTransitioning]);
+  }, [currentStep, viewMode, isComplete, isLast, tts.status]);
 
   // --- Swipe Gestures ---
   const handleTouchStart = (e: React.TouchEvent) => {
