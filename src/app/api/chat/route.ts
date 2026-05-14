@@ -69,8 +69,6 @@ ${context}`;
           model: openrouter(modelId),
           messages: lastMessages,
           system: systemPrompt,
-          maxTokens: 500,
-          temperature: 0.7,
         });
 
         // Se conseguiu iniciar o stream, retorna a resposta
