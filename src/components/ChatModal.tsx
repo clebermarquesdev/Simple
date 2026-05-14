@@ -48,77 +48,95 @@ export default function ChatModal({ isOpen, onClose }: ChatModalProps) {
     setMessages(updatedMessages);
     setInput('');
     setIsLoading(true);
+    const maxRetries = 2;
+    let attempt = 0;
+    let lastError: any = null;
 
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: updatedMessages.map(m => ({
-            role: m.role,
-            content: m.content,
-          })),
-        }),
-      });
+    while (attempt < maxRetries) {
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: updatedMessages.map(m => ({
+              role: m.role,
+              content: m.content,
+            })),
+          }),
+        });
 
-      if (!response.ok) {
-        let errorMessage = 'Erro na resposta do servidor';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData?.error || errorMessage;
-        } catch {
-          // Response wasn't JSON, try text
+        if (!response.ok) {
+          if (response.status === 429 && attempt < maxRetries - 1) {
+            // Se for limite de taxa, espera 2 segundos e tenta de novo
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            attempt++;
+            continue;
+          }
+
+          let errorMessage = 'Erro na resposta do servidor';
           try {
-            errorMessage = await response.text() || errorMessage;
+            const errorData = await response.json();
+            errorMessage = errorData?.error || errorMessage;
           } catch {
-            // ignore
+            try {
+              errorMessage = await response.text() || errorMessage;
+            } catch { /* ignore */ }
           }
+          throw new Error(errorMessage);
         }
-        throw new Error(errorMessage);
-      }
 
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      const assistantId = (Date.now() + 1).toString();
-      
-      // Adiciona mensagem vazia do assistente
-      setMessages(prev => [...prev, { id: assistantId, role: 'assistant', content: '' }]);
-
-      if (reader) {
-        let accumulatedText = '';
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          if (value) {
-            const chunk = decoder.decode(value, { stream: true });
-            accumulatedText += chunk;
-            const currentText = accumulatedText;
-            setMessages(prev =>
-              prev.map(m =>
-                m.id === assistantId
-                  ? { ...m, content: currentText }
-                  : m
-              )
-            );
-          }
-        }
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        const assistantId = (Date.now() + 1).toString();
         
-        if (!accumulatedText.trim()) {
-          throw new Error('⚠️ O limite de uso da API foi atingido ou a resposta falhou. Verifique se sua chave (ou créditos) está válida, aguarde alguns minutos e tente novamente.');
+        // Adiciona mensagem vazia do assistente
+        setMessages(prev => [...prev, { id: assistantId, role: 'assistant', content: '' }]);
+
+        if (reader) {
+          let accumulatedText = '';
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            if (value) {
+              const chunk = decoder.decode(value, { stream: true });
+              accumulatedText += chunk;
+              const currentText = accumulatedText;
+              setMessages(prev =>
+                prev.map(m =>
+                  m.id === assistantId ? { ...m, content: currentText } : m
+                )
+              );
+            }
+          }
+          
+          if (!accumulatedText.trim()) {
+            throw new Error('Resposta vazia da API');
+          }
+          
+          // Sucesso! Sai do loop de tentativas
+          return;
+        }
+      } catch (error) {
+        lastError = error;
+        attempt++;
+        if (attempt < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 1500));
         }
       }
-    } catch (error) {
-      console.error('Erro no chat:', error);
-      const errorMsg = error instanceof Error ? error.message : '';
+    }
+
+    // Se chegou aqui, falhou após todas as tentativas
+    if (lastError) {
+      console.error('Erro no chat após tentativas:', lastError);
+      const errorMsg = lastError instanceof Error ? lastError.message : '';
       setMessages(prev => [
         ...prev,
         {
           id: (Date.now() + 2).toString(),
           role: 'assistant',
-          content: errorMsg.includes('API') || errorMsg.includes('Chave') 
-            ? `⚠️ ${errorMsg}` 
-            : 'Desculpe, tive um probleminha. 😅 Pode tentar de novo?',
+          content: errorMsg.includes('API') || errorMsg.includes('Chave') || errorMsg.includes('limite')
+            ? `⚠️ O limite de uso da API foi atingido temporariamente. Por favor, aguarde alguns segundos e tente enviar sua mensagem novamente.` 
+            : 'Desculpe, tive um probleminha técnico. 😅 Pode tentar enviar de novo daqui a pouco?',
         },
       ]);
     } finally {
