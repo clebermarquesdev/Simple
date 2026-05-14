@@ -28,39 +28,49 @@ export async function POST(req: Request) {
 
   try {
     const { messages } = await req.json();
-
-    // Constrói o contexto com os tutoriais disponíveis para a IA ler
+ 
+    // 1. Limita o histórico de mensagens para evitar estourar o limite de tokens/contexto
+    // Mantemos as últimas 6 mensagens (3 trocas) + a nova mensagem
+    const lastMessages = messages.slice(-7);
+    
+    // 2. Constrói o contexto com os tutoriais de forma mais COMPACTA
+    // Envia apenas títulos e descrições para economizar tokens
     const tutorialsContext = tutorials.map(t => 
-      `- APLICATIVO/TEMA: ${t.title}
-       Resumo: ${t.description}
-       Passo-a-passo: ${t.steps.map(s => `[${s.title}: ${s.instruction}]`).join(" -> ")}`
-    ).join("\n\n");
+      `- ${t.title}: ${t.description}`
+    ).join("\n");
+
+    // 3. Adiciona os passos detalhados apenas para os tutoriais RELEVANTES
+    const userQuery = messages[messages.length - 1].content.toLowerCase();
+    const relevantTutorials = tutorials.filter(t => 
+      userQuery.includes(t.title.toLowerCase().replace('como ', '').split(' ')[0]) ||
+      t.steps.some(s => userQuery.includes(s.title.toLowerCase().split(' ')[0]))
+    );
+
+    const detailedSteps = relevantTutorials.length > 0 
+      ? "\n\nDETALHES DO TUTORIAL RELEVANTE:\n" + relevantTutorials.map(t => 
+          `${t.title}:\n${t.steps.map((s, i) => `${i+1}. ${s.title}: ${s.instruction}`).join("\n")}`
+        ).join("\n\n")
+      : "";
 
     const systemPrompt = `Você é o "Tutor Simple", um assistente virtual extremamente paciente, carinhoso e amigável.
-Seu objetivo principal é ajudar pessoas com pouca experiência em tecnologia (como idosos ou iniciantes) a usar o celular e aplicativos do dia a dia.
+Seu objetivo principal é ajudar pessoas com pouca experiência em tecnologia a usar o celular.
 
-REGRAS DE OURO:
-1. NUNCA use jargões técnicos complexos (como "URL", "Cache", "Navegador", "Bug", "Download"). Explique tudo usando palavras simples. Em vez de "faça o download do app", diga "baixe o aplicativo na lojinha do seu celular".
-2. Responda de forma curta e direta (máximo de 3 parágrafos curtos). Ninguém gosta de ler textos enormes no celular.
-3. Seja encorajador! Use frases como "Fique tranquilo", "É normal ter dúvidas", "Você está indo muito bem".
-4. Use alguns emojis simpáticos e amigáveis, como 😊, 📱, ✨, 👍.
+REGRAS:
+1. NUNCA use jargões técnicos (URL, Cache, Browser, Bug). Explique como se falasse com um avô querido.
+2. Responda de forma CURTA e DIRETA (máximo 2-3 parágrafos curtos).
+3. Seja sempre encorajador e calmo. 😊
 
-TUTORIAIS DA PLATAFORMA SIMPLE:
-Você tem acesso aos seguintes tutoriais que existem no aplicativo. Quando a dúvida for sobre um deles, baseie-se estritamente nestes passos:
----
-${tutorialsContext}
----
+TUTORIAIS DISPONÍVEIS:
+${tutorialsContext}${detailedSteps}
 
-Se o usuário perguntar como fazer algo listado acima, ensine o passo-a-passo com muita clareza.
-Se ele perguntar sobre um aplicativo ou função que não está na lista acima, responda educadamente ensinando como puder (se você souber), mas lembre-o de forma gentil de que você é especialista nos tutoriais listados.`;
+Se o usuário perguntar sobre algo acima, ensine o passo-a-passo carinhosamente.
+Se perguntar sobre algo fora da lista, tente ajudar se souber, mas lembre-o que você é especialista no que está acima.`;
 
-    // Você pode trocar o modelo aqui. Modelos com ':free' no final são gratuitos no OpenRouter
-    // Exemplos: 
-    // - meta-llama/llama-3.3-70b-instruct:free (Excelente modelo gratuito)
-    // - openrouter/free (Escolhe automaticamente um modelo gratuito disponível)
+    // 4. Usamos o seletor automático 'openrouter/free' para garantir que o serviço 
+    // continue funcionando mesmo se modelos específicos deixarem de ser gratuitos.
     const result = streamText({
       model: openrouter('openrouter/free'),
-      messages,
+      messages: lastMessages,
       system: systemPrompt,
       onError: ({ error }) => {
         console.error('🔥 ERRO INTERNO NO STREAMTEXT:', error);
