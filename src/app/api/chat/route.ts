@@ -52,47 +52,22 @@ REGRAS:
 
 ${context}`;
 
-    // 4. Lista de modelos gratuitos para tentar em sequência caso um falhe (Fallback)
-    const modelsToTry = [
-      'meta-llama/llama-3.3-70b-instruct:free',
-      'google/gemini-2.0-flash-lite-preview-02-05:free',
-      'deepseek/deepseek-chat:free',
-      'openrouter/free'
-    ];
+    // 4. Usando o modelo Gemini 2.0 Flash Lite Free - Atualmente o mais estável e rápido no OpenRouter
+    const result = await streamText({
+      model: openrouter('google/gemini-2.0-flash-lite-preview-02-05:free'),
+      messages: lastMessages,
+      system: systemPrompt,
+    });
 
-    let lastError: any = null;
-
-    for (const modelId of modelsToTry) {
-      try {
-        console.log(`Tentando modelo: ${modelId}`);
-        const result = await streamText({
-          model: openrouter(modelId),
-          messages: lastMessages,
-          system: systemPrompt,
-        });
-
-        // Se conseguiu iniciar o stream, retorna a resposta
-        return result.toTextStreamResponse();
-      } catch (error) {
-        console.error(`Falha no modelo ${modelId}:`, error);
-        lastError = error;
-        // Continua para o próximo modelo se for erro de limite (429) ou sobrecarga (503/500)
-        continue;
-      }
-    }
-
-    // Se todos falharem
-    throw lastError || new Error('Todos os modelos gratuitos falharam');
+    return result.toTextStreamResponse();
 
   } catch (error: unknown) {
-    console.error('Erro final na API de chat:', error);
-    
+    console.error('Erro na API de chat:', error);
     const errorMessage = error instanceof Error ? error.message : String(error);
     
-    // Resposta amigável de erro
     return new Response(
       JSON.stringify({ 
-        error: '⚠️ O sistema está muito ocupado no momento. Por favor, aguarde 10 segundos e tente enviar sua mensagem novamente.' 
+        error: '⚠️ O sistema está temporariamente ocupado. Por favor, tente novamente em alguns segundos.' 
       }),
       { status: 429, headers: { 'Content-Type': 'application/json' } }
     );
