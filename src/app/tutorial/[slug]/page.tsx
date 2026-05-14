@@ -72,11 +72,23 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
     const handleInteraction = () => resetTimer();
     events.forEach(e => window.addEventListener(e, handleInteraction));
     
+    // --- Auto-play Audio on Step Change ---
+    let autoPlayTimeout: NodeJS.Timeout;
+    if (viewMode === 'carousel' && !isComplete && !isTransitioning) {
+      autoPlayTimeout = setTimeout(() => {
+        const currentStepData = tutorial.steps[currentStep];
+        if (currentStepData) {
+          tts.play(getStepTextToRead(currentStepData));
+        }
+      }, 1000); // 1 second delay
+    }
+
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
+      if (autoPlayTimeout) clearTimeout(autoPlayTimeout);
       events.forEach(e => window.removeEventListener(e, handleInteraction));
     };
-  }, [currentStep, viewMode, isComplete, isLast, tts.status]);
+  }, [currentStep, viewMode, isComplete, isLast, tts.status, isTransitioning]);
 
   // --- Swipe Gestures ---
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -226,24 +238,37 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
               />
             </div>
 
-            {/* Site link during tutorial */}
+            {/* Site link during tutorial - Redesigned as a discrete pill */}
             {tutorial.siteUrl && (
-              <a
-                href={tutorial.siteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 text-sm font-medium px-4 py-2.5 rounded-xl border-2 border-dashed border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-200 mx-auto mt-6"
-              >
-                <Icon name="open_in_new" size={18} />
-                <span>Abrir o site: <strong className="text-on-surface">{new URL(tutorial.siteUrl).hostname.replace('www.', '')}</strong></span>
-              </a>
+              <div className="flex flex-col items-center gap-3 mt-8">
+                <a
+                  href={tutorial.siteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 px-6 py-2.5 rounded-full border-2 border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-200 shadow-sm bg-surface-container-lowest"
+                >
+                  <Icon name="language" size={20} className="text-primary" />
+                  <span className="font-semibold">Abrir {tutorial.title.replace('Como usar o ', '').replace('Como usar ', '')}</span>
+                </a>
+                <div className="w-16 h-1 bg-outline-variant/30 rounded-full mt-2" />
+              </div>
             )}
 
-            <div className="mt-auto pt-8 flex flex-col gap-4 pb-8">
-              <button onClick={handleNext} className="w-full bg-primary text-on-primary min-h-[56px] rounded-xl font-semibold text-xl flex items-center justify-center shadow-md active:scale-[0.98] transition-all gap-2">
-                {isLast ? "Concluir Tutorial" : "Próximo Passo"} <Icon name={isLast ? "check" : "arrow_forward"} />
+            <div className="mt-auto pt-4 flex flex-col gap-3 pb-8">
+              <button 
+                onClick={handleNext} 
+                className="w-full bg-primary text-on-primary min-h-[64px] rounded-2xl font-bold text-2xl flex items-center justify-center shadow-lg active:scale-[0.97] transition-all gap-3 hover:bg-primary/90"
+              >
+                {isLast ? "Concluir Tutorial" : "Continuar"} 
+                <Icon name={isLast ? "check_circle" : "arrow_forward"} size={28} />
               </button>
-              <button onClick={handleBack} className="w-full min-h-[56px] text-primary font-semibold text-xl flex items-center justify-center hover:bg-surface-container-low rounded-xl transition-colors">Voltar</button>
+              
+              <button 
+                onClick={handleBack} 
+                className="w-full min-h-[48px] text-on-surface-variant font-medium text-lg flex items-center justify-center hover:bg-surface-container-low rounded-xl transition-colors opacity-70 hover:opacity-100"
+              >
+                Voltar
+              </button>
             </div>
           </div>
         )}

@@ -1,13 +1,13 @@
 project:
-  name: "Project Context Initialization"
+  name: "Tutorial Refinement and Accessibility"
   scale: MEDIUM
-  started: "2026-05-06T22:33:37.047Z"
+  started: "2026-05-14T18:58:33.370Z"
   current_phase: P
 
 phases:
   P:
     status: in_progress
-    started_at: "2026-05-06T22:33:37.047Z"
+    started_at: "2026-05-14T18:58:33.369Z"
   R:
     status: pending
   E:
@@ -17,4 +17,15 @@ phases:
   C:
     status: skipped
     reason: "Not required for scale MEDIUM"
+
+execution:
+  history:
+    - timestamp: "2026-05-14T18:58:33.369Z"
+      phase: P
+      action: started
+    - timestamp: "2026-05-14T18:58:33.385Z"
+      phase: C
+      action: phase_skipped
+  last_activity: "2026-05-14T18:58:33.385Z"
+  resume_context: "Fase P (Planejamento) em progresso"
 
