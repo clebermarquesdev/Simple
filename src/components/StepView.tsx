@@ -4,12 +4,17 @@ import Image from "next/image";
 import Icon from "./Icon";
 import type { TutorialStep } from "@/data/tutorials";
 
+import type { ReturnType } from "react";
+import type { useTextToSpeech } from "@/hooks/useTextToSpeech";
+
 interface StepViewProps {
   step: TutorialStep;
   isTransitioning: boolean;
+  tts?: ReturnType<typeof useTextToSpeech>;
+  stepTextToRead?: string;
 }
 
-export default function StepView({ step, isTransitioning }: StepViewProps) {
+export default function StepView({ step, isTransitioning, tts, stepTextToRead }: StepViewProps) {
   return (
     <div
       className={`flex flex-col gap-4 transition-all duration-300 ${
@@ -54,6 +59,59 @@ export default function StepView({ step, isTransitioning }: StepViewProps) {
           {step.instruction}
         </p>
       </div>
+      </div>
+
+      {/* Audio Controls */}
+      {tts && tts.isSupported && stepTextToRead && (
+        <div className="mt-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col gap-3 shadow-sm">
+          <div className="flex items-center gap-2 mb-1">
+            <Icon name="record_voice_over" className="text-on-surface-variant text-xl" />
+            <span className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Assistente de Voz</span>
+          </div>
+          
+          {tts.status === 'idle' ? (
+            <div className="flex gap-2">
+              <button
+                onClick={() => tts.play(stepTextToRead)}
+                className="flex-1 bg-brand-green text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md"
+              >
+                <Icon name="play_arrow" /> Ouvir explicação
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              {tts.status === 'playing' ? (
+                <button
+                  onClick={() => tts.pause()}
+                  className="flex-1 bg-surface-container-high text-on-surface py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all"
+                >
+                  <Icon name="pause" /> Pausar
+                </button>
+              ) : (
+                <button
+                  onClick={() => tts.resume()}
+                  className="flex-1 bg-brand-green text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md"
+                >
+                  <Icon name="play_arrow" /> Continuar
+                </button>
+              )}
+              <button
+                onClick={() => tts.stop()}
+                className="flex-1 bg-error-container text-on-error-container py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all"
+              >
+                <Icon name="stop" /> Parar
+              </button>
+              <button
+                onClick={() => tts.play(stepTextToRead)}
+                className="flex items-center justify-center bg-surface-container-high text-on-surface p-3 rounded-xl active:scale-95 transition-all"
+                aria-label="Repetir passo"
+              >
+                <Icon name="replay" />
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

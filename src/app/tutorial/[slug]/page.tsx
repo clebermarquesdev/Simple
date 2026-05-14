@@ -8,6 +8,8 @@ import ProgressBar from "@/components/ProgressBar";
 import StepView from "@/components/StepView";
 import Icon from "@/components/Icon";
 import Link from "next/link";
+import Switch from "@/components/Switch";
+import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 
 export default function TutorialPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -18,9 +20,12 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [viewMode, setViewMode] = useState<'carousel' | 'list'>('carousel');
+  const [guidedMode, setGuidedMode] = useState(false);
   
+  const tts = useTextToSpeech(1.0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const touchStartX = useRef<number>(0);
+
 
   if (!tutorial) {
     return (
@@ -45,11 +50,27 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
   const handleNext = () => { if (isLast) setIsComplete(true); else goToStep(currentStep + 1); };
   const handleBack = () => { if (currentStep > 0) goToStep(currentStep - 1); else router.back(); };
 
+  // Helper to format text for TTS
+  const getStepTextToRead = (step: typeof tutorial.steps[0]) => {
+    return `${step.title}. ${step.instruction}. ${step.tip ? `Dica: ${step.tip}` : ''}`;
+  };
+
+  // --- Auto-play Voice Mode ---
+  useEffect(() => {
+    if (guidedMode && viewMode === 'carousel' && !isComplete && tts.isSupported) {
+      // Small delay to allow visual transition to finish
+      const timeout = setTimeout(() => {
+        tts.play(getStepTextToRead(tutorial.steps[currentStep]));
+      }, 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentStep, guidedMode, viewMode, isComplete, tts.isSupported]);
+
   // --- Auto-advance Inactivity Timer ---
   const resetTimer = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
-    // Only auto-advance if we are in carousel mode, not complete, and NOT on the last step
-    if (viewMode === 'carousel' && !isComplete && !isLast) {
+    // Only auto-advance if we are in carousel mode, not complete, NOT on the last step, and audio is NOT playing
+    if (viewMode === 'carousel' && !isComplete && !isLast && tts.status !== 'playing') {
       timerRef.current = setTimeout(() => {
         handleNext();
       }, 60000); // 1 minute of inactivity
@@ -66,7 +87,7 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
       if (timerRef.current) clearTimeout(timerRef.current);
       events.forEach(e => window.removeEventListener(e, handleInteraction));
     };
-  }, [currentStep, viewMode, isComplete, isLast]);
+  }, [currentStep, viewMode, isComplete, isLast, tts.status]);
 
   // --- Swipe Gestures ---
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -171,6 +192,60 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
           </div>
         </div>
 
+        {/* Audio Global Controls */}
+        {tts.isSupported ? (
+          <div className="bg-surface-container-lowest rounded-xl p-4 flex flex-col gap-4 card-shadow border border-surface-container">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary-fixed/20 rounded-full flex items-center justify-center">
+                  <Icon name="record_voice_over" className="text-brand-green" />
+                </div>
+                <div>
+                  <p className="font-semibold text-on-surface">Modo Guiado por Voz</p>
+                  <p className="text-xs text-on-surface-variant">Lê as instruções automaticamente ao avançar.</p>
+                </div>
+              </div>
+              <Switch checked={guidedMode} onChange={(checked) => {
+                setGuidedMode(checked);
+                if (!checked) tts.stop();
+              }} ariaLabel="Ativar modo guiado por voz" />
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-between border-t border-outline-variant/30 pt-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-on-surface-variant">Velocidade:</span>
+                <div className="flex bg-surface-container-low rounded-lg p-1">
+                  {[0.75, 1, 1.25].map(r => (
+                    <button
+                      key={r}
+                      onClick={() => tts.setRate(r)}
+                      className={`px-3 py-1 text-sm font-bold rounded-md transition-all ${tts.rate === r ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant'}`}
+                    >
+                      {r}x
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {viewMode === 'list' && (
+                <button
+                  onClick={() => {
+                    const fullText = tutorial.steps.map(getStepTextToRead).join(". ");
+                    tts.play(fullText);
+                  }}
+                  className="w-full sm:w-auto bg-primary text-on-primary px-4 py-2 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md text-sm"
+                >
+                  <Icon name="play_circle" size={20} /> Ouvir tutorial completo
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-surface-container-low rounded-xl p-4 flex items-center gap-3 text-on-surface-variant text-sm">
+            <Icon name="info" /> Seu navegador não permite leitura por voz neste momento.
+          </div>
+        )}
+
         {viewMode === 'list' ? (
           /* List Mode (Long Screenshot) */
           <div className="flex flex-col gap-12 pt-4">
@@ -181,7 +256,12 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
                 </div>
                 <div className="pl-4">
                   <div className="text-sm font-bold text-primary mb-3 tracking-wider uppercase">Passo {index + 1}</div>
-                  <StepView step={step} isTransitioning={false} />
+                  <StepView 
+                    step={step} 
+                    isTransitioning={false} 
+                    tts={tts}
+                    stepTextToRead={getStepTextToRead(step)}
+                  />
                 </div>
               </div>
             ))}
@@ -201,7 +281,12 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
           >
             <ProgressBar current={currentStep + 1} total={totalSteps} />
             <div className="mt-4">
-              <StepView step={tutorial.steps[currentStep]} isTransitioning={isTransitioning} />
+              <StepView 
+                step={tutorial.steps[currentStep]} 
+                isTransitioning={isTransitioning}
+                tts={tts}
+                stepTextToRead={getStepTextToRead(tutorial.steps[currentStep])}
+              />
             </div>
 
             {/* Site link during tutorial */}
