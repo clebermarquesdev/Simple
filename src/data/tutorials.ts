@@ -18,6 +18,7 @@ export interface Tutorial {
   steps: TutorialStep[];
   videoUrl?: string;
   siteUrl?: string;
+  siteLabel?: string;
 }
 
 export interface Category {
@@ -130,6 +131,7 @@ export const tutorials: Tutorial[] = [
     ],
     videoUrl: "https://www.youtube.com/embed/o4YEEm2F2Dw",
     siteUrl: "https://www.bcb.gov.br/estabilidadefinanceira/pix",
+    siteLabel: "Banco Central",
   },
   {
     slug: "como-usar-whatsapp",

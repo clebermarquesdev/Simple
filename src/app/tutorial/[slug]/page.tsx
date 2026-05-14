@@ -236,7 +236,13 @@ export default function TutorialPage({ params }: { params: Promise<{ slug: strin
                   className="flex items-center gap-2.5 px-6 py-2.5 rounded-full border-2 border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-200 shadow-sm bg-surface-container-lowest"
                 >
                   <Icon name="language" size={20} className="text-primary" />
-                  <span className="font-semibold">Abrir {tutorial.title.replace('Como usar o ', '').replace('Como usar ', '')}</span>
+                  <span className="font-semibold">
+                    Abrir {tutorial.siteLabel || tutorial.title
+                      .replace(/^Como (usar|fazer|pagar|acessar|consultar|pedir|comprar) (um|uma) /i, "")
+                      .replace(/^Como (usar|fazer|pagar|acessar|consultar|pedir|comprar) /i, "")
+                      .replace(/^Acessar /i, "")
+                      .trim()}
+                  </span>
                 </a>
                 <div className="w-16 h-1 bg-outline-variant/30 rounded-full mt-2" />
               </div>
