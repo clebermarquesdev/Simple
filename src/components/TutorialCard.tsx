@@ -74,7 +74,6 @@ export default function TutorialCard({
             className="flex items-center gap-2 text-primary font-semibold text-lg hover:underline underline-offset-4 transition-all active:scale-[0.97]"
           >
             <span>Começar Agora</span>
-            <Icon name="arrow_forward" />
           </Link>
           {siteUrl && (
             <a
