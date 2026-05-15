@@ -12,7 +12,8 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   /* config options here */
-  turbopack: {},
 };
 
-export default withPWA(nextConfig);
+// Em ambiente de desenvolvimento, exportamos apenas a configuração limpa do Next.js.
+// Isso evita que o plugin PWA entre em conflito com o Turbopack, o que causa os reloads e panics.
+export default process.env.NODE_ENV === "development" ? nextConfig : withPWA(nextConfig);
