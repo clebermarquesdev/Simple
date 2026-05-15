@@ -3,6 +3,15 @@
 import { useEffect } from "react";
 import { useSettings } from "@/contexts/SettingsContext";
 
+// Extend React's HTMLAttributes to allow custom VLibras attributes
+declare module 'react' {
+  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
+    vw?: string;
+    'vw-access-button'?: string;
+    'vw-plugin-wrapper'?: string;
+  }
+}
+
 export default function VLibras() {
   const { librasEnabled } = useSettings();
 
