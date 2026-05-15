@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import HelpFAB from "@/components/HelpFAB";
+import VLibras from "@/components/VLibras";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 
 const lexend = Lexend({
@@ -62,6 +63,7 @@ export default function RootLayout({
           <main className="pb-24 md:pb-0">{children}</main>
           <BottomNav />
           <HelpFAB />
+          <VLibras />
         </SettingsProvider>
         <script
           dangerouslySetInnerHTML={{

@@ -13,12 +13,14 @@ export interface UseTextToSpeechResult {
   resume: () => void;
   stop: () => void;
   setRate: (rate: number) => void;
+  isBlocked: boolean;
 }
 
 export function useTextToSpeech(defaultRate: number = 1.0): UseTextToSpeechResult {
   const [isSupported, setIsSupported] = useState<boolean>(true);
   const [status, setStatus] = useState<SpeechStatus>("idle");
   const [rate, setRateState] = useState<number>(defaultRate);
+  const [isBlocked, setIsBlocked] = useState<boolean>(false);
   
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -45,7 +47,7 @@ export function useTextToSpeech(defaultRate: number = 1.0): UseTextToSpeechResul
   }, []);
 
   const play = useCallback((text: string) => {
-    if (!synthRef.current || !isSupported) return;
+    if (!synthRef.current || !isSupported || !text.trim()) return;
 
     // Stop any currently playing audio
     stop();
@@ -59,12 +61,26 @@ export function useTextToSpeech(defaultRate: number = 1.0): UseTextToSpeechResul
     };
 
     utterance.onerror = (e) => {
-      console.error("SpeechSynthesis error:", e);
+      // Ignore 'interrupted' or 'canceled' errors as they are expected when stopping/switching steps
+      if (e.error === 'interrupted' || e.error === 'canceled') {
+        return;
+      }
+      
+      // 'not-allowed' happens when the browser blocks autoplay without a user gesture
+      if (e.error === 'not-allowed') {
+        console.warn("SpeechSynthesis: Autoplay blocked. User interaction required.");
+        setIsBlocked(true);
+        setStatus("idle");
+        return;
+      }
+
+      console.error("SpeechSynthesis error:", e.error, e);
       setStatus("idle");
     };
 
     utteranceRef.current = utterance;
     synthRef.current.speak(utterance);
+    setIsBlocked(false); // Reset blocked state on successful call
     setStatus("playing");
   }, [isSupported, rate, stop]);
 
@@ -100,6 +116,7 @@ export function useTextToSpeech(defaultRate: number = 1.0): UseTextToSpeechResul
     pause,
     resume,
     stop,
-    setRate
+    setRate,
+    isBlocked
   };
 }

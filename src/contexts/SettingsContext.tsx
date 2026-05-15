@@ -13,6 +13,10 @@ interface SettingsContextData {
   setNotificationsEnabled: (enabled: boolean) => void;
   darkMode: boolean;
   setDarkMode: (dark: boolean) => void;
+  librasEnabled: boolean;
+  setLibrasEnabled: (enabled: boolean) => void;
+  voiceAssistantEnabled: boolean;
+  setVoiceAssistantEnabled: (enabled: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextData | undefined>(undefined);
@@ -22,6 +26,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [highContrast, setHighContrastState] = useState<boolean>(false);
   const [notificationsEnabled, setNotificationsEnabledState] = useState<boolean>(false);
   const [darkMode, setDarkModeState] = useState<boolean>(false);
+  const [librasEnabled, setLibrasEnabledState] = useState<boolean>(false);
+  const [voiceAssistantEnabled, setVoiceAssistantEnabledState] = useState<boolean>(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -30,10 +36,14 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     const storedHighContrast = localStorage.getItem("@simple:highContrast");
     const storedNotifications = localStorage.getItem("@simple:notifications");
     const storedDarkMode = localStorage.getItem("@simple:darkMode");
+    const storedLibras = localStorage.getItem("@simple:libras");
+    const storedVoice = localStorage.getItem("@simple:voiceAssistant");
 
     if (storedFontSize) setFontSizeState(storedFontSize);
     if (storedHighContrast) setHighContrastState(storedHighContrast === "true");
     if (storedNotifications) setNotificationsEnabledState(storedNotifications === "true");
+    if (storedLibras) setLibrasEnabledState(storedLibras === "true");
+    if (storedVoice !== null) setVoiceAssistantEnabledState(storedVoice === "true");
     
     // Dark mode: check localStorage, then system preference
     if (storedDarkMode !== null) {
@@ -63,6 +73,16 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const setDarkMode = (dark: boolean) => {
     setDarkModeState(dark);
     localStorage.setItem("@simple:darkMode", String(dark));
+  };
+
+  const setLibrasEnabled = (enabled: boolean) => {
+    setLibrasEnabledState(enabled);
+    localStorage.setItem("@simple:libras", String(enabled));
+  };
+
+  const setVoiceAssistantEnabled = (enabled: boolean) => {
+    setVoiceAssistantEnabledState(enabled);
+    localStorage.setItem("@simple:voiceAssistant", String(enabled));
   };
 
   // Apply settings to document.documentElement (html element)
@@ -107,6 +127,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         setNotificationsEnabled,
         darkMode,
         setDarkMode,
+        librasEnabled,
+        setLibrasEnabled,
+        voiceAssistantEnabled,
+        setVoiceAssistantEnabled,
       }}
     >
       {children}

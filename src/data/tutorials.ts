@@ -142,7 +142,7 @@ export const tutorials: Tutorial[] = [
     categorySlug: "redes-sociais",
     categoryIcon: "chat",
     difficulty: "Iniciante",
-    image: "/images/9914549e-8403-4fbb-9b00-938454800f08.jpg",
+    image: "/images/9914549e-8403-4fbb-9b00-938454800f08.png",
     featured: false,
     steps: [
       {
@@ -150,35 +150,35 @@ export const tutorials: Tutorial[] = [
         instruction:
           "Procure pelo ícone verde do WhatsApp na tela do celular e toque nele para abrir.",
         tip: "É o ícone verde com um telefone branco.",
-        image: "/images/9914549e-8403-4fbb-9b00-938454800f08.jpg",
+        image: "/images/9914549e-8403-4fbb-9b00-938454800f08.png",
       },
       {
         title: "Veja suas conversas",
         instruction:
           "A tela inicial mostra todas as suas conversas. Toque em qualquer nome para abrir o chat.",
         tip: "As mensagens mais recentes ficam no topo da lista.",
-        image: "/images/9914549e-8403-4fbb-9b00-938454800f08.jpg",
+        image: "/images/9914549e-8403-4fbb-9b00-938454800f08.png",
       },
       {
         title: "Envie uma mensagem de texto",
         instruction:
           'Toque no campo "Mensagem" na parte de baixo e digite o que deseja. Depois, toque na seta verde para enviar.',
         tip: "Você pode usar emojis tocando na carinha sorridente!",
-        image: "/images/9914549e-8403-4fbb-9b00-938454800f08.jpg",
+        image: "/images/9914549e-8403-4fbb-9b00-938454800f08.png",
       },
       {
         title: "Envie um áudio",
         instruction:
           "Segure o botão de microfone e fale. Solte quando terminar para enviar o áudio.",
         tip: "Segure firme enquanto fala. Se arrastar para o lado, cancela.",
-        image: "/images/9914549e-8403-4fbb-9b00-938454800f08.jpg",
+        image: "/images/9914549e-8403-4fbb-9b00-938454800f08.png",
       },
       {
         title: "Faça uma ligação",
         instruction:
           "Dentro da conversa, toque no ícone de telefone no topo para ligar, ou no ícone de câmera para videochamada.",
         tip: "Ligações pelo WhatsApp são gratuitas usando Wi-Fi!",
-        image: "/images/9914549e-8403-4fbb-9b00-938454800f08.jpg",
+        image: "/images/9914549e-8403-4fbb-9b00-938454800f08.png",
       },
     ],
     videoUrl: "https://www.youtube.com/embed/ghIsVurSs-o",
@@ -315,20 +315,20 @@ export const tutorials: Tutorial[] = [
     categorySlug: "governo",
     categoryIcon: "account_balance_wallet",
     difficulty: "Intermediário",
-    image: "/images/FGTS-DIGITAL.jpg",
+    image: "/images/FGTS-DIGITAL.png",
     featured: false,
     steps: [
       {
         title: "Baixe o app FGTS",
         instruction: "Procure por 'FGTS' na loja de aplicativos e instale o app oficial da Caixa.",
         tip: "O ícone é um quadrado azul com letras brancas.",
-        image: "/images/FGTS-DIGITAL.jpg"
+        image: "/images/FGTS-DIGITAL.png"
       },
       {
         title: "Entre com gov.br",
         instruction: "Use seu CPF e senha do portal gov.br para entrar.",
         tip: "É a mesma senha que você usa em outros serviços do governo.",
-        image: "/images/FGTS-DIGITAL.jpg"
+        image: "/images/FGTS-DIGITAL.png"
       }
     ],
     videoUrl: "https://www.youtube.com/embed/gjcnkPxkv8s",

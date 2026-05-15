@@ -23,6 +23,10 @@ export default function PerfilClient({ user }: PerfilClientProps) {
     setNotificationsEnabled,
     darkMode,
     setDarkMode,
+    librasEnabled,
+    setLibrasEnabled,
+    voiceAssistantEnabled,
+    setVoiceAssistantEnabled,
   } = useSettings();
 
   const handleToggleNotifications = async (enabled: boolean) => {
@@ -99,6 +103,38 @@ export default function PerfilClient({ user }: PerfilClientProps) {
             checked={darkMode} 
             onChange={setDarkMode} 
             ariaLabel="Ativar modo escuro" 
+          />
+        </div>
+
+        {/* Voice Assistant Setting */}
+        <div className="bg-surface-container-lowest rounded-xl p-4 flex items-center gap-4 card-shadow border border-surface-container">
+          <div className="min-w-[56px] min-h-[56px] bg-surface-container-high rounded-xl flex items-center justify-center">
+            <Icon name="record_voice_over" className="text-2xl text-on-surface-variant" />
+          </div>
+          <div className="flex-1">
+            <p className="text-lg font-medium text-on-surface">Assistente de voz</p>
+            <p className="text-sm text-on-surface-variant">Lê os passos dos tutoriais automaticamente</p>
+          </div>
+          <Switch 
+            checked={voiceAssistantEnabled} 
+            onChange={setVoiceAssistantEnabled} 
+            ariaLabel="Ativar assistente de voz" 
+          />
+        </div>
+
+        {/* Libras Setting */}
+        <div className="bg-surface-container-lowest rounded-xl p-4 flex items-center gap-4 card-shadow border border-surface-container">
+          <div className="min-w-[56px] min-h-[56px] bg-surface-container-high rounded-xl flex items-center justify-center">
+            <span className="text-2xl">🤟</span>
+          </div>
+          <div className="flex-1">
+            <p className="text-lg font-medium text-on-surface">Libras (VLibras)</p>
+            <p className="text-sm text-on-surface-variant">Ativa o tradutor de sinais oficial</p>
+          </div>
+          <Switch 
+            checked={librasEnabled} 
+            onChange={setLibrasEnabled} 
+            ariaLabel="Ativar VLibras" 
           />
         </div>
 

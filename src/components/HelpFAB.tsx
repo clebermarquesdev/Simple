@@ -3,39 +3,70 @@
 import { useState } from "react";
 import Icon from "./Icon";
 import ChatModal from "./ChatModal";
+import AccessibilityModal from "./AccessibilityModal";
 
 export default function HelpFAB() {
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isAccessOpen, setIsAccessOpen] = useState(false);
 
   return (
     <>
-      <div className="fixed bottom-24 right-6 md:bottom-8 z-40">
-        {/* Tooltip */}
-        {showTooltip && !isChatOpen && (
-          <div className="absolute bottom-full right-0 mb-3 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-lg text-sm font-medium max-w-[220px] animate-fade-in pointer-events-none">
-            <p>Precisa de ajuda? Toque aqui para conversar com nosso assistente!</p>
-            <div className="absolute bottom-[-6px] right-6 w-3 h-3 bg-inverse-surface transform rotate-45" />
+      <div className="fixed bottom-24 right-6 md:bottom-8 z-40 flex flex-col items-end gap-3">
+        {/* Expanded Options */}
+        {isOpen && (
+          <div className="flex flex-col items-end gap-3 animate-in slide-in-from-bottom-4 fade-in duration-300">
+            {/* Accessibility Button */}
+            <div className="flex items-center gap-3">
+              <span className="bg-surface-container-highest text-on-surface px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm border border-outline-variant">
+                Acessibilidade
+              </span>
+              <button
+                onClick={() => {
+                  setIsAccessOpen(true);
+                  setIsOpen(false);
+                }}
+                className="w-12 h-12 bg-secondary text-on-secondary rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-all"
+                aria-label="Acessibilidade"
+              >
+                <Icon name="accessibility" size={24} filled />
+              </button>
+            </div>
+
+            {/* Chat/Help Button */}
+            <div className="flex items-center gap-3">
+              <span className="bg-surface-container-highest text-on-surface px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm border border-outline-variant">
+                Tutor AI
+              </span>
+              <button
+                onClick={() => {
+                  setIsChatOpen(true);
+                  setIsOpen(false);
+                }}
+                className="w-12 h-12 bg-tertiary text-on-tertiary rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-all"
+                aria-label="Conversar com Tutor AI"
+              >
+                <Icon name="smart_toy" size={24} filled />
+              </button>
+            </div>
           </div>
         )}
 
-        {/* FAB Button */}
+        {/* Main FAB */}
         <button
-          onClick={() => {
-            setShowTooltip(false);
-            setIsChatOpen(true);
-          }}
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
-          className="w-16 h-16 bg-primary rounded-full shadow-[0_8px_24px_rgba(0,106,52,0.3)] flex items-center justify-center text-on-primary hover:bg-surface-tint active:scale-95 transition-all duration-200"
-          aria-label="Ajuda"
+          onClick={() => setIsOpen(!isOpen)}
+          className={`w-16 h-16 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 active:scale-95 z-50 ${
+            isOpen ? "bg-surface-container-highest text-on-surface rotate-90" : "bg-primary text-on-primary"
+          }`}
+          aria-label="Menu de Ajuda e Acessibilidade"
         >
-          <Icon name="lightbulb" filled className="text-3xl" />
+          <Icon name={isOpen ? "close" : "accessibility_new"} filled className="text-3xl" />
         </button>
       </div>
 
-      {/* Chat Modal */}
+      {/* Modals */}
       <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+      <AccessibilityModal isOpen={isAccessOpen} onClose={() => setIsAccessOpen(false)} />
     </>
   );
 }

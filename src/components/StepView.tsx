@@ -5,6 +5,8 @@ import Icon from "./Icon";
 import type { TutorialStep } from "@/data/tutorials";
 
 import type { UseTextToSpeechResult } from "@/hooks/useTextToSpeech";
+import { useSettings } from "@/contexts/SettingsContext";
+import { useEffect } from "react";
 
 interface StepViewProps {
   step: TutorialStep;
@@ -14,6 +16,17 @@ interface StepViewProps {
 }
 
 export default function StepView({ step, isTransitioning, tts, stepTextToRead }: StepViewProps) {
+  const { voiceAssistantEnabled } = useSettings();
+
+  useEffect(() => {
+    if (voiceAssistantEnabled && tts && stepTextToRead && !isTransitioning) {
+      // Small delay to ensure transition starts/ends smoothly
+      const timer = setTimeout(() => {
+        tts.play(stepTextToRead);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [step, voiceAssistantEnabled, tts, stepTextToRead, isTransitioning]);
   return (
     <div
       className={`flex flex-col gap-4 transition-all duration-300 ${
@@ -75,6 +88,19 @@ export default function StepView({ step, isTransitioning, tts, stepTextToRead }:
             </button>
           )}
         </div>
+        
+        {/* Blocked Audio Hint */}
+        {tts && tts.isBlocked && (
+          <div className="bg-primary/10 border border-primary/20 p-3 rounded-xl flex items-center gap-3 animate-in slide-in-from-top-2 duration-300">
+            <div className="w-8 h-8 bg-primary text-on-primary rounded-full flex items-center justify-center shrink-0">
+              <Icon name="touch_app" size={18} />
+            </div>
+            <p className="text-sm font-medium text-primary leading-tight">
+              Clique no botão <strong>Ouvir</strong> acima para liberar o áudio do assistente.
+            </p>
+          </div>
+        )}
+
         <p className="text-xl text-on-surface-variant leading-relaxed">
           {step.instruction}
         </p>
